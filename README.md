@@ -41,7 +41,7 @@ I am a CIS student at the UofL College of Business, in the Cyber Security progra
 
 [BIKE Database ERD](https://github.com/MayaLeneave/MayaLeneave/blob/62013b3a51a604d13a918bba88cc0dbc61961d2c/Bike_ERD.png)
 
-[BIKE Database Prompts and SQL Queries]()
+[BIKE Database Prompts and SQL Queries](https://github.com/MayaLeneave/MayaLeneave/blob/cb6f2e2b50e4a8417c76010509758b3e3aca16f8/CIS%20310%20E9%20Individual_Maya_Harden.txt)
 
 [STAYWELL Database](https://github.com/MayaLeneave/MayaLeneave/blob/217fba2bd134f752b0ec8fe60e1b50e88de96e30/STAYWELL_TEXT_FILE.txt)
 
