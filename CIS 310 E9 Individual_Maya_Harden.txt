@@ -1,0 +1,350 @@
+--======================================================================================================================
+--====================================================Bike Exercise=====================================================
+--======================================================================================================================
+/*
+STUDENT NAME: Maya Harden
+STUDENT ID: 5090974
+Which Questions did you answer? e.g. 1-5, 10, 12....: 18-28
+*/
+
+
+/*
+Note: your query should be based on the actual data. It is good to gain familiarity with table contents before starting to query. 
+Query should use as few tables as possible if a JOIN is required. Sometimes a single table may contain all the attribute you need.
+*/
+
+/*
+Grading: 
+No Credit- If you provide no query, or ONLY the query without explanation, even if is fully correct.
+
+Full Credit 1 - Provide your working/thinking process via comments
+		Your intermediate steps/queries while building the query, 
+		And the fully correct query for the query
+
+Full Credit 2 - If you cannot arrive at a fully correct query, 
+		Still, provide your working/thinking process via comments, which tables have you checked, which may contain data, which do not
+		Your intermediate steps/queries while attemptiong to build the query, and at least 3+ relevant, trying queries 
+		*they don't need to execute properly, but should be relevant, and demonstrate your thinking progression. Simple queries such as Select * from table do NOT count
+*/
+
+
+--====================================================Exercise Questions =====================================================
+--==========================================& Expected output table columns ===================================================
+
+ 
+--18. What is the average price paid for the 2001 Shimano XTR rear derailleurs?
+
+/* 
+I sought to find the components and their ID by using this query:
+SELECT ComponentID, Category, Description
+FROM Component
+WHERE Description LIKE '%XTR%';
+
+I then used the component IDs from all the XTRs with the category rear derailleurs: 309020, 313600
+
+Now I can make the query as I know I can use these ComponentIDs with the PricePaid row in PurchaseItem, and the Year row in Component
+
+*/
+USE BIKE;
+SELECT AVG(PricePaid) AS AvgOfPricePaid
+FROM PurchaseItem
+WHERE ComponentID IN (
+    SELECT ComponentID
+    FROM Component
+    WHERE Year = 2001
+    AND ComponentID IN (309020, 313600)
+);
+
+--AvgOfPricePaid
+--74.7697
+ 
+--19. What is the average top tube length for a 54 cm (frame size) road bike built in 1999?
+
+/* 
+I tried looking at the length associated with TubeName "Top" in BikeTubes but it only showed me values of 0. I therefore assumed that the value in row TopTube in Bicycle represents length, as it does not specify. Finding the average for this was simple like a simplified version of the query for #18
+*/
+
+USE BIKE;
+SELECT AVG(TopTube) AS AvgOfTopTube
+FROM Bicycle
+WHERE FrameSize = 54
+AND StartDate LIKE '%1999%';
+
+--AvgOfTopTube
+--54.5559
+
+--20. On average, which costs (list price) more: road tires or mountain bike tires?
+
+/*
+I began with searching through Component to find Category values including Tire. As there are 3, but each begin with the word "Tire", I would use LIKE in my query again to simplify the process. I would also need to find the average of both MTB and Road related ListPrices before comparing the two.  GROUP BY Road is needed and the averages will be sorted in descending order so the largest is immediate.
+
+*/
+
+USE BIKE;
+SELECT Road, AVG(ListPrice) AS AvgOfListPrice
+FROM Component
+WHERE (Road = 'Road' OR Road = 'MTB')
+AND Category LIKE 'Tire%'
+GROUP BY Road
+ORDER BY AverageListPrice DESC;
+
+--Road	AvgOfListPrice
+ Road   37.9375
+ MTB   31.4375
+
+
+--21. In May 2003, which employees sold road bikes that they also painted?
+
+/* During my inspection of the Bicycle table, I recognized that the Painter column utilizes EmployeeID as well. Therefore I determined I needed to find the rows where the value of Painter is the same as EmployeeID, in addition to the StartDate beginning with 2003-05. To get the correct output I also needed to write my query to associate the EmployeeID with their LastName value in the Employee Table. I began with the following query but it displayed no output:
+
+SELECT E.EmployeeID, E.LastName
+FROM Employee E
+JOIN Bicycle B
+ON E.EmployeeID = B.Painter
+WHERE B.StartDate LIKE '2003-05%';
+
+So I changed the bottom line to WHERE B.StartDate >= '2003-05-01' AND B.StartDate < '2003-06-01'
+
+I needed to also add DISTINCT as there were many duplicate results
+*/
+
+SELECT DISTINCT E.EmployeeID, E.LastName
+FROM Employee E
+JOIN Bicycle B
+ON E.EmployeeID = B.Painter
+WHERE B.StartDate >= '2003-05-01' AND B.StartDate < '2003-06-01';
+
+
+--EmployeeID	LastName
+12512           Cartom
+15293          Venetiaan
+29387           Stenheim
+51512           Jugnauth
+87295           Tudjman
+89097           Dehaene
+93736           Green
+
+--22. In 2002, was the Old English letter style more popular with some paint jobs?
+
+/*
+I saw the connection between LetterStyle and LetterStyleID, with Old English being represented by the value English. I would need to JOIN the Paint table to bring in the ColorName and recognized I would need to turn duplicates into a total by using COUNT. 
+The end result was 13 different ColorNames associated with English.
+*/
+
+USE BIKE;
+SELECT 
+    B.PaintID,
+    P.ColorName,
+    COUNT(B.PaintID) AS NumBikesPaint
+FROM Bicycle B
+JOIN Paint P
+ON B.PaintID = P.PaintID
+WHERE B.LetterStyleID = 'English'
+AND B.StartDate LIKE '%2002%'
+GROUP BY B.PaintID, P.ColorName
+ORDER BY NumBikesPaint DESC;
+
+
+--PaintID	ColorName	Number of Bikes Painted
+ 12             Copper Haze		53
+ 7		Mountain Green		47
+ 10		Morning Sun		46				
+
+
+--23. Which race bikes in 2003 sold for more than the average price of race bikes in 2002?
+/*
+I wrote the query in two separate steps, calculating the average for 2002 to be later joined, and then making the comparison and display of the table.
+*/
+
+-- Step 1:
+USE BIKE;
+WITH AvgSalePrice2002 AS (
+    SELECT AVG(SalePrice) AS AvgSalePrice
+    FROM Bicycle
+    WHERE ModelType = 'Race'
+    AND OrderDate LIKE '%2002%'
+)
+
+-- Step 2
+SELECT 
+    B.SerialNumber,
+    B.ModelType,
+    B.OrderDate,
+    B.SalePrice
+FROM Bicycle B
+CROSS JOIN AvgSalePrice2002
+WHERE B.ModelType = 'Race'
+AND B.OrderDate LIKE '%2003%'
+AND B.SalePrice > AvgSalePrice2002.AvgSalePrice;
+
+
+--SerialNumber	ModelType	OrderDate	SalePrice
+ 
+--24. Which component that had no sales (installations) in 2004 has the highest inventory value (cost basis)?
+/*
+Firstly I determined to find the highest inventory value I needed to multiply EstimatedCost and QuantityOnHand. Next I would have to JOIN with Manufacturer to be able to associated a name with their ID in the Component table. I also needed to use BikeParts table to figure out what componentIDs were associated with a 2004 Date Installed and exclude these.
+*/
+
+SELECT 
+    M.ManufacturerName,
+    C.ProductNumber,
+    C.Category,
+    (C.EstimatedCost * C.QuantityOnHand) AS Value,
+    C.ComponentID
+FROM Component C
+LEFT JOIN Manufacturer M
+ON C.ManufacturerID = M.ManufacturerID
+WHERE C.ComponentID NOT IN (
+    SELECT BP.ComponentID
+    FROM BikeParts BP
+    WHERE BP.DateInstalled LIKE '%2004%'
+)
+ORDER BY Value DESC;
+
+
+--ManufacturerName	ProductNumber	Category	Value	ComponentID
+ 
+--25. Create a vendor contacts list of all manufacturers and retail stores in California.
+--Include only the columns for VendorName and Phone. 
+--The retail stores should only include stores that participated in the sale of at least one bicycle in 2004
+
+/*
+Creating this query involved me working out how to make sure that both the names of the stores and manufacturers as well as their phone could be both displayed in a single column respectively. I could easily get an idea of how I would combine them based on the ERD but had to review the textbook for the best way to properly merge them. To break it down into steps based on the visualization the diagram provides, I did I worked out the scripts for one table at a time. Initially I forgot to include the distinguisher for having at least one sale in 2004 but it was easy to add it into the script with my AND.
+
+SELECT 
+    RS.StoreName AS Name,
+    RS.Phone AS Phone
+FROM RetailStore RS
+JOIN City C
+ON RS.CityID = C.CityID
+WHERE C.State = 'CA'
+AND RS.StoreID IN (
+    SELECT B.StoreID
+    FROM Bicycle B
+    WHERE B.OrderDate LIKE '%2004%'
+)
+UNION
+SELECT 
+    M.ManufacturerName AS Name,
+    M.Phone AS Phone
+FROM Manufacturer M
+JOIN City C
+ON M.CityID = C.CityID
+WHERE C.State = 'CA';
+
+--Store Name Or Manufacturer Name	Phone
+ 
+--26. List all of the employees who report to Venetiaan.
+
+/*
+During my inspection of the database, I found this would be an easy query to write as both EmployeeID and CurrentManager (which uses this value) are in the same Employee table. I just needed to pull all the entries that have Venetiaan's ID as the current manager and display the values in the proper format.  
+*/
+
+WITH VenetiaanID AS (
+    SELECT EmployeeID, LastName
+    FROM Employee
+    WHERE LastName = 'Venetiaan'
+)
+--This and the JOIN below is how I decided to compare the IDs and output two different LastName columns, but there may be a more simple way I didnt think of
+SELECT 
+    V.LastName
+    E.EmployeeID,
+    E.LastName,
+    E.FirstName,
+    E.Title
+FROM Employee E
+JOIN VenetiaanID V
+ON E.CurrentManager = V.EmployeeID;
+
+
+--LastName	EmployeeID	LastName	FirstName	Title
+ 
+--27. List the components where the company purchased at least 25 percent more units than it used through June 30, 2000.
+
+/*
+The steps I broke this down into to make it more manageable was form tables based on the columns in the expected output. I made TotalReceived and excluded any OrderDates above 2000-06-30 by joining the purchase tables. I made TotalUsed based on this previous step. I spent a long time trying to simplify my work but had to make a mess of JOINS under the title "ComponentAnalysis" to do the math in order to get the necessary totals and find the correct percentages based on the 25% threshold. Another one was needed to pull in the ManufacturerName based on the ID in the table. I used ORDER BY with NetPct as that was what made the most sense to me
+*/
+
+WITH TotalReceived AS (
+    SELECT 
+        PI.ComponentID,
+        SUM(PI.QuantityReceived) AS TotalReceived
+    FROM PurchaseItem PI
+    JOIN PurchaseOrder PO
+    ON PI.PurchaseID = PO.PurchaseID
+    WHERE PO.OrderDate < '2000-06-30'
+    GROUP BY PI.ComponentID
+),
+TotalUsed AS (
+    SELECT 
+        BP.ComponentID,
+        SUM(BP.Quantity) AS TotalUsed
+    FROM BikeParts BP
+    GROUP BY BP.ComponentID
+),
+ComponentAnalysis AS (
+    SELECT 
+        C.ComponentID,
+        M.ManufacturerName,
+        C.ProductNumber,
+        C.Category,
+        TR.TotalReceived,
+        TU.TotalUsed,
+        (TR.TotalReceived - TU.TotalUsed) AS NetGain,
+        ROUND((TR.TotalReceived - TU.TotalUsed) * 100.0 / TU.TotalUsed, 2) AS NetPct,
+        C.ListPrice
+    FROM Component C
+    JOIN TotalReceived TR
+    ON C.ComponentID = TR.ComponentID
+    JOIN TotalUsed TU
+    ON C.ComponentID = TU.ComponentID
+    JOIN Manufacturer M
+    ON C.ManufacturerID = M.ManufacturerID
+    WHERE TR.TotalReceived > 1.25 * TU.TotalUsed
+)
+SELECT *
+FROM ComponentAnalysis
+ORDER BY NetPct DESC;
+
+
+--ComponentID	ManufacturerName	ProductNumber	Category	TotalReceived	TotalUsed	NetGain	NetPct	ListPrice
+ 
+--28. In which years did the average build time for the year exceed the overall average build time for all years? 
+--The build time is the difference between order date and ship date.
+--Use the difference between OrderDate and ShipDate.
+
+/* I made my query in 4 separate steps after outlining what I wanted to do: Finding the BuildTime for every entry, translating that into a yearly build time, and then an average for all years, followed by the script to see what years' averages were greater than the overall average. However, doing my best to review what has been covered previously in class and the textbook, I was unable to get past an error associated with finding the average; my use of the due date extension was the result of this process.*/
+
+WITH BuildTimes AS (
+-- Step 1
+    SELECT 
+        LEFT(OrderDate, 4) AS Year, 
+        (ShipDate - OrderDate) AS BuildTimeInDays
+    FROM Bicycle
+),
+
+YearlyAverages AS (
+    -- Step 2
+    SELECT 
+        Year,
+        AVG(BuildTimeInDays) AS AverageBuildTime
+    FROM BuildTimes
+    GROUP BY Year
+),
+OverallAverage AS (
+    -- Step 3
+    SELECT AVG(AverageBuildTime) AS OverallAverageBuildTime
+    FROM YearlyAverages
+)
+-- Step 4
+SELECT 
+    YA.Year,
+    YA.AverageBuildTime AS BuildTime
+FROM YearlyAverages YA
+CROSS JOIN OverallAverage OA
+WHERE YA.AverageBuildTime > OA.OverallAverageBuildTime
+ORDER BY YA.Year;
+
+
+--Year	BuildTime
+
