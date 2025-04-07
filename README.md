@@ -9,12 +9,6 @@ I am a CIS student at the UofL College of Business, in the Cyber Security progra
 
 . SQL
 
-. CSS
-
-. HTML
-
-. JavaScript
-
 . Active Directory
 
 . Linux
