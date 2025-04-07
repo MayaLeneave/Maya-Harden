@@ -43,10 +43,23 @@ I am a CIS student at the UofL College of Business, in the Cyber Security progra
 
 [BIKE Database Prompts and SQL Queries]()
 
-[STAYWELL Database]()
+[STAYWELL Database](https://github.com/MayaLeneave/MayaLeneave/blob/217fba2bd134f752b0ec8fe60e1b50e88de96e30/STAYWELL_TEXT_FILE.txt)
 
-[STAYWELL Database SQL Queries]()
+[STAYWELL Database SQL Queries](https://github.com/MayaLeneave/MayaLeneave/blob/217fba2bd134f752b0ec8fe60e1b50e88de96e30/CIS%20310%20A10_Maya_Harden.txt)
 
 ## System Analysis and Design
 
+[Worth the Words Website Project Final Iteration](https://github.com/MayaLeneave/MayaLeneave/blob/81e5efb65a9cad3a3e30bca8eabbb92fd9687060/I5_InsightArchitects.docx)
+
+[Worth the Words Website Project Final Elaboration](https://github.com/MayaLeneave/MayaLeneave/blob/81e5efb65a9cad3a3e30bca8eabbb92fd9687060/Elaboration_InsightArchitects.pdf)
+
 ## Management of Information Systems
+
+[Autopsy of a Data Breach: The Target Case Analysis](https://github.com/MayaLeneave/MayaLeneave/blob/81e5efb65a9cad3a3e30bca8eabbb92fd9687060/Target_CaseAnalysis_MHarden.docx)
+
+[CareGroup Case Analysis](https://github.com/MayaLeneave/MayaLeneave/blob/81e5efb65a9cad3a3e30bca8eabbb92fd9687060/CareGroup_CaseAnalysis_MHarden.docx)
+
+[Volkswagen Group: Adapting in the Age of AI Case Analysis](https://github.com/MayaLeneave/MayaLeneave/blob/81e5efb65a9cad3a3e30bca8eabbb92fd9687060/Volkswagen_CaseAnalysis_MHarden.docx)
+
+[Peak Experiences and Strategic IT Alignment At Vermont Teddy Bear Case Analysis](https://github.com/MayaLeneave/MayaLeneave/blob/81e5efb65a9cad3a3e30bca8eabbb92fd9687060/VTB_CaseAnalysis_MHarden.docx)
+
