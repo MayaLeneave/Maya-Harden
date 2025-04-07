@@ -1,0 +1,79 @@
+--===========================================================================
+--============================= CIS310 ASSIGNMENT 10 =========================
+--===========================================================================
+
+/*
+STUDENT NAME: Maya Harden
+STUDENT ID: 5090974
+SUBMISSION DATE: 11-22-24
+
+
+For each of the following business request PROVIDE THE SQL Query that adequtely performs the tasks.
+**These queries are based on STAYWELL DB Tables and their data contents**
+
+Grading:
+Proper Code Formatting is 20% of homework grade
+Executable code can earn up to 100% of the grade
+Unexecutable code can only earn up to a max of 50% of the grade
+*/
+
+
+-- 1. Create a Stored Procedure DISPLAY_OWNER_YOURFIRSTNAMELASTNAME (E.G. DISPLAY_OWNER_JIAOWANG), and its corresponding execution/test code.
+--This Stored Procedure takes a single parameter/variable named INPUT_PROPERTY_ID to store user input value of a PROPERTY_ID. 
+--It should output OFFICE_NUM, ADDRESS, OWNER_NUM and OWNER_NAME (concatenated FirstName LastName in proper format) 
+--from the PROPERTY and OWNER tables for the given PROPERTY_ID
+
+CREATE PROCEDURE DISPLAY_OWNER_MAYAHARDEN
+    @INPUT_PROPERTY_ID SMALLINT --SMALLINT seems most appropriate for the ID in this database
+AS
+BEGIN
+    SELECT 
+        p.OFFICE_NUM,
+        p.ADDRESS,
+        p.OWNER_NUM,
+        CONCAT(o.FIRST_NAME, ' ', o.LAST_NAME) AS OWNER_NAME --requested concatenation of names
+    FROM PROPERTY p
+    JOIN OWNER o
+        ON p.OWNER_NUM = o.OWNER_NUM
+    WHERE p.PROPERTY_ID = @INPUT_PROPERTY_ID;
+END;
+
+-- execution/test
+
+--declaring and setting variables prior to execution:
+DECLARE @TEST_PROPERTY_ID SMALLINT;
+SET @TEST_PROPERTY_ID = 9;
+--execution
+EXEC DISPLAY_OWNER_MAYAHARDEN @INPUT_PROPERTY_ID = @TEST_PROPERTY_ID;
+
+
+-- 2. Create a Stored Procedure UPDATE_OWNER_YOURFIRSTNAMELASTNAME (E.G. UPDATE_OWNER_JIAOWANG), and its corresponding execution/test code.
+--This Stored Procedure takes 2 parameters/variables:  
+--I_OWNER_NUM to store user input value of a OWNER_NUM, and I_LAST_NAME to store user input value of a new LAST_NAME. 
+--This stored procedure should update/change the last name to the given value, for the given owner num.	
+
+CREATE PROCEDURE UPDATE_OWNER_MAYAHARDEN
+    @I_OWNER_NUM CHAR(5), --All owner numbers are 5 characters long
+    @I_LAST_NAME VARCHAR(25) --Seems appropriate to ensure the value will fit without taking up too much data
+AS
+BEGIN
+    UPDATE OWNER
+    SET LAST_NAME = @I_LAST_NAME
+    WHERE OWNER_NUM = @I_OWNER_NUM;
+END;
+
+--execution/test
+
+DECLARE @TEST_OWNER_NUM CHAR(5);
+DECLARE @TEST_LAST_NAME VARCHAR(25);
+
+SET @TEST_OWNER_NUM = 'LO108'; 
+SET @TEST_LAST_NAME = 'Harden'; 
+
+EXEC UPDATE_OWNER_MAYAHARDEN @I_OWNER_NUM = @TEST_OWNER_NUM, @I_LAST_NAME = @TEST_LAST_NAME;
+
+-- I used this to display the output of the change to make sure it is correct:
+SELECT * FROM OWNER WHERE OWNER_NUM = @TEST_OWNER_NUM;
+
+
+
