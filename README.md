@@ -39,7 +39,7 @@ I am a CIS student at the UofL College of Business, in the Cyber Security progra
 
 ## Database Design
 
-[BIKE Database ERD]()
+[BIKE Database ERD](https://github.com/MayaLeneave/MayaLeneave/blob/62013b3a51a604d13a918bba88cc0dbc61961d2c/Bike_ERD.png)
 
 [BIKE Database Prompts and SQL Queries]()
 
